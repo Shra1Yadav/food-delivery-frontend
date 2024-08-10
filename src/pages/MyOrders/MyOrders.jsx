@@ -10,14 +10,10 @@ const MyOrders = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.post(
-        `${url}/api/order/userorders`,
-        {},
-        { headers: { token } }
-      );
+      const response = await axios.post(url + "/api/order/userorders", {}, { headers: { token } });
       setData(response.data.data);
     } catch (error) {
-      console.error('Failed to fetch orders:', error);
+      console.error('Error fetching orders:', error);
     }
   };
 
@@ -25,7 +21,7 @@ const MyOrders = () => {
     if (token) {
       fetchOrders();
     }
-  }, [token, url, token]); // Add `url` and `token` to dependency array
+  }, [token]);
 
   return (
     <div className='my-orders'>
@@ -34,4 +30,24 @@ const MyOrders = () => {
         {data.length > 0 ? (
           data.map((order, index) => (
             <div key={index} className='my-orders-order'>
-  
+              <img src={assets.parcel_icon} alt="" />
+              <p>{order.items.map((item, index) => (
+                index === order.items.length - 1
+                  ? `${item.name} x ${item.quantity}`
+                  : `${item.name} x ${item.quantity}, `
+              ))}</p>
+              <p>{currency}{order.amount}.00</p>
+              <p>Items: {order.items.length}</p>
+              <p><span>&#x25cf;</span> <b>{order.status}</b></p>
+              <button onClick={fetchOrders}>Track Order</button>
+            </div>
+          ))
+        ) : (
+          <p>No orders found.</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default MyOrders;
