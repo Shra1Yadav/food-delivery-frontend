@@ -28,7 +28,7 @@ const Verify = () => {
 
     useEffect(() => {
         verifyPayment();
-    }, [verifyPayment, navigate]); // Adding verifyPayment and navigate as dependencies
+    }, []); // Empty dependency array
 
     return (
         <div className='verify'>
