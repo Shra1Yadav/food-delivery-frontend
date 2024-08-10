@@ -1,36 +1,40 @@
 import axios from 'axios';
-import React, { useContext, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import React, { useContext, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { StoreContext } from '../../Context/StoreContext';
-import './Verify.css'
+import './Verify.css';
 
 const Verify = () => {
-  const { url } = useContext(StoreContext)
-  const [searchParams, setSearchParams] = useSearchParams();
-  const success = searchParams.get("success")
-  const orderId = searchParams.get("orderId")
+    const { url } = useContext(StoreContext);
+    const [searchParams] = useSearchParams();
+    const success = searchParams.get("success");
+    const orderId = searchParams.get("orderId");
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const verifyPayment = async () => {
-    const response = await axios.post(url + "/api/order/verify", { success, orderId });
-    if (response.data.success) {
-      navigate("/myorders");
-    }
-    else {
-      navigate("/")
-    }
-  }
+    const verifyPayment = async () => {
+        try {
+            const response = await axios.post(`${url}/api/order/verify`, { success, orderId });
+            if (response.data.success) {
+                navigate("/myorders");
+            } else {
+                navigate("/");
+            }
+        } catch (error) {
+            console.error("Error verifying payment:", error);
+            navigate("/");
+        }
+    };
 
-  useEffect(() => {
-    verifyPayment();
-  }, [])
+    useEffect(() => {
+        verifyPayment();
+    }, [verifyPayment, navigate]); // Adding verifyPayment and navigate as dependencies
 
-  return (
-    <div className='verify'>
-      <div className="spinner"></div>
-    </div>
-  )
-}
+    return (
+        <div className='verify'>
+            <div className="spinner"></div>
+        </div>
+    );
+};
 
-export default Verify
+export default Verify;
